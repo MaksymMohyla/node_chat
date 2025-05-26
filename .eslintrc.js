@@ -7,7 +7,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: './tsconfig.json', // якщо використовуєте TypeScript з конфігурацією
+    project: './tsconfig.json',
   },
 
   env: {

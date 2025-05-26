@@ -7,6 +7,7 @@ import RoomsPage from './pages/RoomsPage';
 import LogoutPage from './pages/LogoutPage';
 import { useContext } from 'react';
 import { UserContext } from '../features/user/UserContext';
+import RoomPage from './pages/RoomPage';
 
 const Main = () => {
   const { user } = useContext(UserContext);
@@ -17,6 +18,8 @@ const Main = () => {
           <Route index element={<HomePage />} />
 
           {user && <Route path="rooms" element={<RoomsPage />} />}
+
+          {user && <Route path="rooms/:id" element={<RoomPage />} />}
 
           {!user && <Route path="sign-up" element={<SignUpPage />} />}
 

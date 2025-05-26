@@ -1,1 +1,4 @@
-[]
+[
+  { "name": "room1", "id": 1748257612178, "participants": [], "messages": [] },
+  { "name": "room2", "id": 1748257614977, "participants": [], "messages": [] }
+]

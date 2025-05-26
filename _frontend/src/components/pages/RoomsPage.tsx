@@ -1,13 +1,72 @@
+import { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { Room } from '../../features/types';
+import { publicAxiosInstance } from '../../api/axios';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 type Inputs = {
   name: string;
 };
 
 const RoomsPage = () => {
-  const { register, handleSubmit } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [messages, setMessages] = useState<{ success: string; error: string }>({
+    success: '',
+    error: '',
+  });
+  const { register, handleSubmit, reset } = useForm<Inputs>();
+
+  useEffect(() => {
+    (async function fetchRooms() {
+      try {
+        const response = await publicAxiosInstance.get('/rooms');
+        setRooms(response.data);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error('Error fetching rooms:', error.response?.data);
+          setMessages({
+            success: '',
+            error: error.response?.data || 'Failed to fetch rooms',
+          });
+        } else {
+          console.error('Unexpected error:', error);
+          setMessages({
+            success: '',
+            error: 'An unexpected error occurred',
+          });
+        }
+      }
+    })();
+  }, [rooms]);
+
+  const onSubmit: SubmitHandler<Inputs> = async (formData) => {
+    try {
+      const response = await publicAxiosInstance.post(
+        '/rooms/create',
+        formData,
+      );
+      setMessages({
+        success: `Room ${formData.name} created succesfully!`,
+        error: '',
+      });
+      setRooms((prevRooms) => [...prevRooms, response.data.room as Room]);
+      reset();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error creating room:', error.response?.data);
+        setMessages({
+          success: '',
+          error: error.response?.data || 'Creation failed',
+        });
+      } else {
+        console.error('Unexpected error:', error);
+        setMessages({
+          success: '',
+          error: 'An unexpected error occurred',
+        });
+      }
+    }
   };
 
   return (
@@ -57,10 +116,32 @@ const RoomsPage = () => {
               Confirm
             </button>
           </div>
+
+          {messages.success && (
+            <p className="mt-2 text-sm/6 text-green-500">{messages.success}</p>
+          )}
+          {messages.error && (
+            <p className="mt-2 text-sm/6 text-red-500">{messages.error}</p>
+          )}
         </form>
       </div>
 
-      <ul className="mt-10 text-gray-300">Existing rooms:</ul>
+      <div className="mt-10">
+        <h3 className="mb-2 text-gray-400 font-semibold">Existing rooms:</h3>
+        <ul className="space-y-6">
+          {rooms.map((room) => (
+            <li key={room.id} className="flex items-center gap-3">
+              <Link
+                to={`/rooms/${room.id}`}
+                className="rounded bg-indigo-500 px-3 py-1 text-sm text-white hover:bg-indigo-400 transition"
+              >
+                Join
+              </Link>
+              <span className="text-gray-200">{room.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

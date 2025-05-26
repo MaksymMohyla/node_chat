@@ -1,9 +1,13 @@
 import { Router } from 'express';
+import roomController from '../controllers/rooms.ts';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-  res.send('Welcome to the Rooms API');
-});
+router.post('/create', roomController.create);
+router.post('/:id/addUser', roomController.addUserToRoom);
+router.patch('/:id/removeUser', roomController.removeUserFromRoom);
+
+router.get('/', roomController.getAll);
+router.get('/:id', roomController.getById);
 
 export default router;
