@@ -38,7 +38,7 @@ const RoomsPage = () => {
         }
       }
     })();
-  }, [rooms]);
+  }, []);
 
   const onSubmit: SubmitHandler<Inputs> = async (formData) => {
     try {

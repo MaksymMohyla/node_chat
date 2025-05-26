@@ -53,6 +53,51 @@ const RoomPage = () => {
     };
   }, [id]);
 
+  useEffect(() => {
+    const socket = new WebSocket('ws://localhost:3005');
+
+    socket.addEventListener('open', () => {
+      if (id) {
+        socket.send(JSON.stringify({ type: 'joinRoom', roomId: id }));
+      }
+    });
+
+    socket.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
+      if (data.event === 'newMessage' && data.roomId === id) {
+        setRoomInfo((prevRoom) => {
+          if (prevRoom) {
+            return {
+              ...prevRoom,
+              messages: [...prevRoom.messages, data.message],
+            };
+          }
+          return prevRoom;
+        });
+      }
+      if (data.event === 'userJoined' && data.roomId === id) {
+        setRoomInfo((prevRoom) => {
+          if (
+            prevRoom &&
+            !prevRoom.participants.some(
+              (participant) => participant.id === data.user.id,
+            )
+          ) {
+            return {
+              ...prevRoom,
+              participants: [...prevRoom.participants, data.user],
+            };
+          }
+          return prevRoom;
+        });
+      }
+    });
+
+    return () => {
+      socket.close();
+    };
+  }, [id]);
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || !currentUser || !id) return;

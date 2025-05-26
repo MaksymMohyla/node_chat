@@ -2,6 +2,7 @@ import type { IRoom } from '../types/Room.ts';
 import type { Request, Response } from 'express';
 import roomService from '../services/room.ts';
 import type { IMessage } from '../types/Message.ts';
+import type { WebSocketServer } from 'ws';
 
 class RoomController {
   public async create(req: Request, res: Response) {
@@ -80,6 +81,11 @@ class RoomController {
 
     try {
       const updatedRoom = await roomService.addUserToRoom(roomId, user);
+      const wss = req.app.get('wss') as WebSocketServer;
+      wss.clients.forEach((client) => {
+        client.send(JSON.stringify({ event: 'userJoined', roomId, user }));
+      });
+
       return res.status(200).json({
         message: 'User added to room successfully',
         room: updatedRoom,
@@ -136,6 +142,11 @@ class RoomController {
 
     try {
       const updatedRoom = await roomService.addMessageToRoom(roomId, message);
+      const wss = req.app.get('wss') as WebSocketServer;
+      wss.clients.forEach((client) => {
+        client.send(JSON.stringify({ event: 'newMessage', roomId, message }));
+      });
+
       return res.status(201).json({
         message: 'Message added to room successfully',
         room: updatedRoom,
