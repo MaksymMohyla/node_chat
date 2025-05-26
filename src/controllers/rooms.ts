@@ -137,7 +137,7 @@ class RoomController {
     if (!message) {
       return res
         .status(400)
-        .json({ error: 'Message with userId and text is required' });
+        .json({ error: 'Message with author and text content is required' });
     }
 
     try {

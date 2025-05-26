@@ -55,17 +55,18 @@ class RoomService {
         }
         try {
           const rooms = JSON.parse(data) as IRoom[];
-          rooms.push({
+          const newRoom = {
             ...name,
             id: Date.now(),
             participants: [],
             messages: [],
-          } as IRoom);
+          } as IRoom;
+          rooms.push(newRoom);
           this.writeRooms(JSON.stringify(rooms), (writeErr) => {
             if (writeErr) {
               return reject(writeErr);
             }
-            resolve(name);
+            resolve(newRoom);
           });
         } catch (parseError) {
           reject(parseError);

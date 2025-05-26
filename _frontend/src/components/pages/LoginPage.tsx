@@ -24,7 +24,7 @@ const LoginPage = () => {
   async function onSubmit(formData: Inputs) {
     setIsLoading(true);
     try {
-      const responce = await publicAxiosInstance.post('/users/login', formData);
+      const response = await publicAxiosInstance.post('/users/login', formData);
 
       setMessages({
         success: `Login successful. Welcome back!`,
@@ -33,8 +33,8 @@ const LoginPage = () => {
       setIsLoading(false);
       reset();
       navigate('/');
-      setUser(responce.data.user as User);
-      localStorage.setItem('user', JSON.stringify(responce.data.user));
+      setUser(response.data.user as User);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
     } catch (error) {
       setIsLoading(false);
 

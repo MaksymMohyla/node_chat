@@ -23,8 +23,8 @@ const HomePage = () => {
       }!`}</h2>
       <ul>
         Activated users:
-        {users.map((user) => (
-          <li key={user.id}>{user.username}</li>
+        {users.map((u) => (
+          <li key={u.id}>{u.username}</li>
         ))}
       </ul>
       <div className="perspective-[600px] flex justify-center items-center h-[80vh] bg-[#333]">
