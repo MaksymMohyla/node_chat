@@ -2,7 +2,6 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { styles } from '../utils/styles';
 import { useContext } from 'react';
 import { UserContext } from '../features/user/UserContext';
-import { privateAxiosInstance } from '../api/axios';
 
 const Header = () => {
   const isActive = ({ isActive }: { isActive: boolean }) =>
@@ -21,8 +20,8 @@ const Header = () => {
           </NavLink>
 
           {user && (
-            <NavLink to="edit" className={isActive}>
-              Edit
+            <NavLink to="rooms" className={isActive}>
+              Rooms
             </NavLink>
           )}
         </div>
@@ -40,18 +39,17 @@ const Header = () => {
           )}
 
           {user && (
-            <NavLink
-              to="logout"
-              className={isActive}
+            <button
+              className="text-[1.2rem] px-4 leading-loose block rounded-md hover:bg-gray-700 hover:text-white h-10 bg-gray-500"
               onClick={async () => {
                 if (!window.confirm('Are you sure?')) return;
-                await privateAxiosInstance.get('/logout');
                 setUser(null);
+                localStorage.removeItem('user');
                 navigate('/');
               }}
             >
               Logout
-            </NavLink>
+            </button>
           )}
         </div>
       </nav>

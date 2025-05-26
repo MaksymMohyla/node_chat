@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Chat using Node.js",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "init": "mate-scripts init",
     "start": "node src/index.js",
@@ -19,16 +20,22 @@
   "devDependencies": {
     "@mate-academy/eslint-config": "latest",
     "@mate-academy/scripts": "^2.1.1",
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.21",
     "eslint": "^8.57.0",
     "eslint-plugin-jest": "^28.6.0",
     "eslint-plugin-node": "^11.1.0",
     "jest": "^29.7.0",
-    "prettier": "^3.3.2"
+    "prettier": "^3.3.2",
+    "typescript": "^5.8.3"
   },
   "mateAcademy": {
     "projectType": "javascript"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0"
   }
 }

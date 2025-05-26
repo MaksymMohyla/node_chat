@@ -4,10 +4,10 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../features/user/UserContext';
 import { User } from '../../features/types';
+import { publicAxiosInstance } from '../../api/axios';
 
 type Inputs = {
-  email: string;
-  password: string;
+  username: string;
 };
 
 const LoginPage = () => {
@@ -24,13 +24,7 @@ const LoginPage = () => {
   async function onSubmit(formData: Inputs) {
     setIsLoading(true);
     try {
-      const responce = await axios.post(
-        'http://localhost:3005/login',
-        formData,
-        {
-          withCredentials: true,
-        }
-      );
+      const responce = await publicAxiosInstance.post('/users/login', formData);
 
       setMessages({
         success: `Login successful. Welcome back!`,
@@ -39,7 +33,8 @@ const LoginPage = () => {
       setIsLoading(false);
       reset();
       navigate('/');
-      setUser(responce.data as User);
+      setUser(responce.data.user as User);
+      localStorage.setItem('user', JSON.stringify(responce.data.user));
     } catch (error) {
       setIsLoading(false);
 
@@ -81,49 +76,19 @@ const LoginPage = () => {
         >
           <div>
             <label
-              htmlFor="email"
+              htmlFor="username"
               className="block text-sm/6 font-medium text-gray-300"
             >
-              Email address
+              Username
             </label>
             <div className="mt-2">
               <input
-                {...register('email')}
-                id="email"
-                name="email"
-                type="email"
+                {...register('username')}
+                id="username"
+                name="username"
+                type="text"
                 required
-                autoComplete="email"
-                className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-gray-100 outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-400 sm:text-sm/6"
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm/6 font-medium text-gray-300"
-              >
-                Password
-              </label>
-              <div className="text-sm">
-                <Link
-                  to="/reset-password"
-                  className="font-semibold text-indigo-400 hover:text-indigo-300"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-            </div>
-            <div className="mt-2">
-              <input
-                {...register('password')}
-                id="password"
-                name="password"
-                type="password"
-                required
-                autoComplete="current-password"
+                autoComplete="username"
                 className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-gray-100 outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-400 sm:text-sm/6"
               />
             </div>

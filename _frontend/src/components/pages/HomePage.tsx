@@ -2,22 +2,19 @@ import { useContext, useEffect, useState } from 'react';
 import '../../assets/styles/App.css';
 import { UserContext } from '../../features/user/UserContext';
 import { User } from '../../features/types';
-import { privateAxiosInstance } from '../../api/axios';
+import { publicAxiosInstance } from '../../api/axios';
 
 const HomePage = () => {
   const { user } = useContext(UserContext);
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    (async function fetchUsers() {
-      try {
-        const response = await privateAxiosInstance.get('/users');
-        setUsers(response.data);
-      } catch (error) {
-        console.error('Failed to fetch users:', error);
-      }
-    })();
-  }, []);
+    if (user) {
+      publicAxiosInstance.get('/users').then((res) => setUsers(res.data));
+    } else {
+      setUsers([{ id: '0', username: 'You are guest!' }]);
+    }
+  }, [user]);
 
   return (
     <>
@@ -27,7 +24,7 @@ const HomePage = () => {
       <ul>
         Activated users:
         {users.map((user) => (
-          <li key={user.email}>{user.username}</li>
+          <li key={user.id}>{user.username}</li>
         ))}
       </ul>
       <div className="perspective-[600px] flex justify-center items-center h-[80vh] bg-[#333]">

@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "paths": {
+      "#app": ["./src/app.ts"],
+      "#configs": ["./src/configs/index.ts"],
+      "#constants": ["./src/constants/index.ts"],
+      "#controllers": ["./src/controllers/index.ts"],
+      "#errors": ["./src/errors/index.ts"],
+      "#helpers": ["./src/helpers/index.ts"],
+      "#middleware": ["./src/middleware/index.ts"],
+      "#models": ["./src/models/index.ts"],
+      "#repositories": ["./src/repositories/index.ts"],
+      "#routes": ["./src/routes/index.ts"],
+      "#services": ["./src/services/index.ts"],
+      "#types": ["./src/types/index.ts"],
+      "#validators": ["./src/validators/index.ts"]
+    },
+    "outDir": "dist",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.json", "./api/*.ts", "tests/**/*.ts", "docs/**/*.json", "vitest.config.ts"],
+  "exclude": ["node_modules"]
+}

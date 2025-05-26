@@ -1,14 +1,12 @@
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { PASSWORD_PATTERN } from '../../utils/constants';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { publicAxiosInstance } from '../../api/axios';
+import { UserContext } from '../../features/user/UserContext';
 
 type Inputs = {
-  email: string;
   username: string;
-  password: string;
-  'confirm-password': string;
 };
 
 const SignUpPage = () => {
@@ -17,31 +15,30 @@ const SignUpPage = () => {
     success: '',
     error: '',
   });
+  const { setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm<Inputs>();
-  const password = watch('password');
-  const email = watch('email');
+  const { register, handleSubmit, reset } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (formData) => {
     setIsLoading(true);
     try {
-      await axios.post('http://localhost:3005/register', formData);
+      const response = await publicAxiosInstance.post(
+        '/users/register',
+        formData,
+      );
 
       setMessages({
-        success: `Registration allowed. The confirmation email was sent to ${email}`,
+        success: `Registration allowed. Welcome, ${formData.username}!`,
         error: '',
       });
       setIsLoading(false);
       reset();
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      setUser(response.data.user);
+      navigate('/');
     } catch (error) {
       setIsLoading(false);
-      console.log(formData);
 
       if (axios.isAxiosError(error)) {
         console.error('Error registering user:', error.response?.data);
@@ -76,26 +73,6 @@ const SignUpPage = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label
-              htmlFor="email"
-              className="block text-sm/6 font-medium text-gray-300"
-            >
-              Email address
-            </label>
-            <div className="mt-2">
-              <input
-                {...register('email')}
-                id="email"
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-gray-100 outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-400 sm:text-sm/6"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label
               htmlFor="username"
               className="block text-sm/6 font-medium text-gray-300"
             >
@@ -111,70 +88,6 @@ const SignUpPage = () => {
                 autoComplete="username"
                 className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-gray-100 outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-400 sm:text-sm/6"
               />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm/6 font-medium text-gray-300"
-              >
-                Password - should be at least 6 characters, and include at least
-                one letter and one number
-              </label>
-            </div>
-            <div className="mt-2">
-              <input
-                {...register('password', {
-                  pattern: {
-                    value: PASSWORD_PATTERN,
-                    message:
-                      'Password must be at least 6 characters long and include at least one letter and one number',
-                  },
-                })}
-                id="password"
-                name="password"
-                type="password"
-                required
-                autoComplete="password"
-                className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-gray-100 outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-400 sm:text-sm/6"
-              />
-              {errors['password'] && (
-                <p className="mt-2 text-sm/6 text-red-500">
-                  {errors['password'].message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="confirm-password"
-                className="block text-sm/6 font-medium text-gray-300"
-              >
-                Confirm password
-              </label>
-            </div>
-            <div className="mt-2">
-              <input
-                {...register('confirm-password', {
-                  validate: (value) =>
-                    value === password || 'The passwords do not match',
-                  required: 'Please confirm your password',
-                })}
-                id="confirm-password"
-                name="confirm-password"
-                type="password"
-                autoComplete="current-password"
-                className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-gray-100 outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-400 sm:text-sm/6"
-              />
-              {errors['confirm-password'] && (
-                <p className="mt-2 text-sm/6 text-red-500">
-                  {errors['confirm-password'].message}
-                </p>
-              )}
             </div>
           </div>
 

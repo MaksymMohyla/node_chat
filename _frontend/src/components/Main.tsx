@@ -3,9 +3,7 @@ import HomePage from './pages/HomePage';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
-import ActivationPage from './pages/ActivationPage';
-import EditPage from './pages/EditPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
+import RoomsPage from './pages/RoomsPage';
 import LogoutPage from './pages/LogoutPage';
 import { useContext } from 'react';
 import { UserContext } from '../features/user/UserContext';
@@ -18,22 +16,13 @@ const Main = () => {
         <Route path="/">
           <Route index element={<HomePage />} />
 
-          {user && <Route path="edit" element={<EditPage />} />}
+          {user && <Route path="rooms" element={<RoomsPage />} />}
 
           {!user && <Route path="sign-up" element={<SignUpPage />} />}
 
           {!user && <Route path="login" element={<LoginPage />} />}
 
           {user && <Route path="logout" element={<LogoutPage />} />}
-
-          {user && (
-            <Route path="reset-password" element={<ResetPasswordPage />} />
-          )}
-
-          <Route
-            path="activate/:activationToken"
-            element={<ActivationPage />}
-          />
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>
