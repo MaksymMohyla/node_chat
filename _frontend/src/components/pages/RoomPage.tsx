@@ -6,21 +6,10 @@ import { publicAxiosInstance } from '../../api/axios';
 const RoomPage = () => {
   const { id } = useParams();
   const [roomInfo, setRoomInfo] = useState<Room | null>(null);
+  const [input, setInput] = useState<string>('');
   const currentUser = JSON.parse(
     localStorage.getItem('user') || 'null',
   ) as User | null;
-
-  const removeUserFromRoom = async () => {
-    if (currentUser && id) {
-      try {
-        await publicAxiosInstance.patch(`/rooms/${id}/removeUser`, {
-          userId: +currentUser.id,
-        });
-      } catch (error) {
-        console.error('Error removing user from room:', error);
-      }
-    }
-  };
 
   useEffect(() => {
     const fetchRoomInfo = async () => {
@@ -47,10 +36,36 @@ const RoomPage = () => {
     };
     addUserToRoom();
 
+    const removeUserFromRoom = async () => {
+      if (currentUser && id) {
+        try {
+          await publicAxiosInstance.patch(`/rooms/${id}/removeUser`, {
+            userId: +currentUser.id,
+          });
+        } catch (error) {
+          console.error('Error removing user from room:', error);
+        }
+      }
+    };
+
     return () => {
       removeUserFromRoom();
     };
   }, [id]);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || !currentUser || !id) return;
+    try {
+      await publicAxiosInstance.post(`/rooms/${id}/addMessage`, {
+        author: currentUser,
+        content: input,
+      });
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+    setInput('');
+  };
 
   return roomInfo ? (
     <div className="flex flex-col items-center justify-center h-full w-full">
@@ -67,11 +82,14 @@ const RoomPage = () => {
           )}
         </ul>
       </div>
-      <form className="flex w-full max-w-md mt-4">
+
+      <form className="flex w-full max-w-md mt-4" onSubmit={onSubmit}>
         <input
           type="text"
           className="flex-1 border rounded-l px-3 py-2 focus:outline-none"
           placeholder="Type your message..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
         />
         <button
           type="submit"
@@ -80,6 +98,7 @@ const RoomPage = () => {
           Send
         </button>
       </form>
+
       <div className="w-full max-w-md mt-6">
         <h2 className="text-lg font-semibold mb-2">Messages:</h2>
         <ul className="bg-gray-800 rounded p-4 space-y-2">

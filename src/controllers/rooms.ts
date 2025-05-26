@@ -1,6 +1,7 @@
 import type { IRoom } from '../types/Room.ts';
 import type { Request, Response } from 'express';
 import roomService from '../services/room.ts';
+import type { IMessage } from '../types/Message.ts';
 
 class RoomController {
   public async create(req: Request, res: Response) {
@@ -117,6 +118,35 @@ class RoomController {
       return res
         .status(500)
         .json({ error: `Failed to remove user from room: ${error}` });
+    }
+  }
+
+  public async addMessageToRoom(req: Request, res: Response) {
+    const roomId = req.params.id;
+    const message = req.body as IMessage;
+
+    if (!roomId) {
+      return res.status(400).json({ error: 'Room ID is required' });
+    }
+    if (!message) {
+      return res
+        .status(400)
+        .json({ error: 'Message with userId and text is required' });
+    }
+
+    try {
+      const updatedRoom = await roomService.addMessageToRoom(roomId, message);
+      return res.status(201).json({
+        message: 'Message added to room successfully',
+        room: updatedRoom,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not found')) {
+        return res.status(404).json({ error: error.message });
+      }
+      return res
+        .status(500)
+        .json({ error: `Failed to add message to room: ${error}` });
     }
   }
 }

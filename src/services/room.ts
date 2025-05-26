@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import type { IRoom } from '../types/Room.ts';
 import type { IUser } from '../types/User.ts';
+import type { IMessage } from '../types/Message.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -121,6 +122,38 @@ class RoomService {
           }
           const room = rooms[roomIndex];
           room.participants = room.participants.filter((u) => u.id !== userId);
+          rooms[roomIndex] = room;
+          this.writeRooms(JSON.stringify(rooms), (writeErr) => {
+            if (writeErr) {
+              return reject(writeErr);
+            }
+            resolve(room);
+          });
+        } catch (parseError) {
+          reject(parseError);
+        }
+      });
+    });
+  }
+
+  public async addMessageToRoom(roomId: string, message: Omit<IMessage, 'id'>) {
+    return new Promise((resolve, reject) => {
+      this.readRooms((err, data) => {
+        if (err) {
+          return reject(err);
+        }
+        try {
+          const rooms = JSON.parse(data) as IRoom[];
+          const roomIndex = rooms.findIndex((room) => room.id === +roomId);
+          if (roomIndex === -1) {
+            return reject(new Error(`Room with id - ${roomId} not found`));
+          }
+          const room = rooms[roomIndex];
+          const newMessage = {
+            ...message,
+            id: Date.now(),
+          } as IMessage;
+          room.messages.push(newMessage);
           rooms[roomIndex] = room;
           this.writeRooms(JSON.stringify(rooms), (writeErr) => {
             if (writeErr) {
