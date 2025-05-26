@@ -12,7 +12,7 @@ const HomePage = () => {
     if (user) {
       publicAxiosInstance.get('/users').then((res) => setUsers(res.data));
     } else {
-      setUsers([{ id: '0', username: 'You are guest!' }]);
+      setUsers([{ id: 0, username: 'You are guest!' }]);
     }
   }, [user]);
 

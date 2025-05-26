@@ -1,16 +1,16 @@
 export type User = {
-  id: string;
+  id: number;
   username: string;
 };
 
 export type Message = {
-  id: string;
+  id: number;
   author: User;
   content: string;
 };
 
 export type Room = {
-  id: string;
+  id: number;
   name: string;
   participants: User[];
   messages: Message[];

@@ -4,7 +4,6 @@ import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import RoomsPage from './pages/RoomsPage';
-import LogoutPage from './pages/LogoutPage';
 import { useContext } from 'react';
 import { UserContext } from '../features/user/UserContext';
 import RoomPage from './pages/RoomPage';
@@ -24,8 +23,6 @@ const Main = () => {
           {!user && <Route path="sign-up" element={<SignUpPage />} />}
 
           {!user && <Route path="login" element={<LoginPage />} />}
-
-          {user && <Route path="logout" element={<LogoutPage />} />}
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>

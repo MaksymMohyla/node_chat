@@ -40,7 +40,7 @@ const RoomPage = () => {
       if (currentUser && id) {
         try {
           await publicAxiosInstance.patch(`/rooms/${id}/removeUser`, {
-            userId: +currentUser.id,
+            userId: currentUser.id,
           });
         } catch (error) {
           console.error('Error removing user from room:', error);
